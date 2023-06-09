@@ -13,19 +13,19 @@ export const Patient_DB: { Patient_DB?: mongoDB.Collection } = {};
 export const User_DB: { User_DB?: mongoDB.Collection } = {};
 
 
-// Initialize Connection
-export async function connectToDatabase () {
-    dotenv.config();
+// // Initialize Connection
+// export async function connectToDatabase () {
+//     dotenv.config();
  
-    const client: mongoDB.MongoClient = new mongoDB.MongoClient(process.env.DB_CONN_STRING);
+//     const client: mongoDB.MongoClient = new mongoDB.MongoClient(process.env.DB_CONN_STRING);
             
-    await client.connect();
+//     await client.connect();
         
-    const db: mongoDB.Db = client.db(process.env.DB_NAME);
+//     const db: mongoDB.Db = client.db(process.env.DB_NAME);
    
-    const gamesCollection: mongoDB.Collection = db.collection(//process.env.GAMES_COLLECTION_NAME);
+//     const gamesCollection: mongoDB.Collection = db.collection(//process.env.GAMES_COLLECTION_NAME);
  
-  //collections.games = gamesCollection;
+//   //collections.games = gamesCollection;
        
-         console.log(`Successfully connected to database: ${db.databaseName} and collection: ${//gamesCollection.collectionName}`);
- }
+//          console.log(`Successfully connected to database: ${db.databaseName} and collection: ${//gamesCollection.collectionName}`);
+//  }
