@@ -1,12 +1,10 @@
-import { MongoClient, Db } from "mongodb";
+import { MongoClient } from "mongodb";
 
 const uri =
   "mongodb+srv://GarbhaGudi:4rFng94CuIwucPxO@cluster0.z3cxvrc.mongodb.net/?retryWrites=true&w=majority";
 const options = {};
 
 let client: MongoClient;
-let cachedClient: MongoClient;
-let cachedDb: Db;
 let clientPromise: Promise<MongoClient>;
 
 if (process.env.NODE_ENV === "development") {
@@ -25,9 +23,6 @@ if (process.env.NODE_ENV === "development") {
   // In production mode, it's best to not use a global variable.
   client = new MongoClient(uri, options);
   clientPromise = client.connect();
-  const db = client.db();
-  cachedClient = client;
-  cachedDb = db;
 }
 
 // Export a module-scoped MongoClient promise. By doing this in a
