@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div>
       {/* <Header /> */}
-      <main className='h-[100vh]'>
+      <main className=''>
         <Component {...pageProps} />
       </main>
       <Footer />
