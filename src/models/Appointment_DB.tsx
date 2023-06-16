@@ -1,15 +1,13 @@
 //External dependencies
-import { ObjectId } from "mongodb";
-
+import { ObjectId } from 'mongodb';
+const { model, Schema } = require('mongoose');
 // Class Implementation
-export default class Appointment_db {
-  constructor(
-    public Doctor_Name: string,
-    public Start_Time: Date,
-    public End_Time: Date,
-    public Consultation_Type: string,
-    public Patient_Name: string,
-    public schema: any,
-    public id?: ObjectId
-  ) {}
-}
+const appointmentSchema = new Schema({
+  Doctor_Name: String,
+  Start_Time: Date,
+  End_Time: Date,
+  Consultation_Type: String,
+  Patient_Name: String,
+});
+
+module.exports = model('Appointment', appointmentSchema);
