@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 const { model, Schema } = require('mongoose');
 // Class Implementation
 const appointmentSchema = new Schema({
+  id: Object,
   Doctor_Name: String,
   Start_Time: Date,
   End_Time: Date,
