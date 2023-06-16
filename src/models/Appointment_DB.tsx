@@ -9,6 +9,7 @@ const appointmentSchema = new Schema({
   End_Time: Date,
   Consultation_Type: String,
   Patient_Name: String,
+  image: { data: Buffer, contentType: String },
 });
 
 module.exports = model('Appointment', appointmentSchema);

@@ -3,13 +3,13 @@ import { ObjectId } from 'mongodb';
 const { model, Schema } = require('mongoose');
 
 // Class Implementation
-const locationSchema = new Schema({
+const branchSchema = new Schema({
   id: Object,
   Name: String,
   Address: String,
 });
 
-module.exports = model('Location', locationSchema);
+module.exports = model('Branch', branchSchema);
 
 // export default class Appointment_DB {
 //   constructor(

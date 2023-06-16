@@ -11,7 +11,7 @@ export default async function Appointmenthandler(
   if (req.method === 'GET') {
     try {
       const appointments = await db
-        .collection('appointments')
+        .collection('appointments') // collection name
         .find({})
         .toArray();
       res.status(200).json(appointments);
@@ -21,21 +21,25 @@ export default async function Appointmenthandler(
   } else if (req.method === 'POST') {
     try {
       const {
+        id,
         Doctor_Name,
         Start_Time,
         End_Time,
         Consultation_Type,
         Patient_Name,
+        image,
       } = req.body;
 
       // Perform any necessary validation or data manipulation before inserting into the database
 
       const appointment = {
+        id,
         Doctor_Name,
         Start_Time,
         End_Time,
         Consultation_Type,
         Patient_Name,
+        image,
       };
 
       const result = await db.collection('appointments').insertOne(appointment);

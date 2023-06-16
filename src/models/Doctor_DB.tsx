@@ -15,6 +15,8 @@ const doctorSchema = new Schema({
   Experience: Number,
   Consultation_Type: [Schema.Types.mixed],
   Qualification: String,
+  Username: String,
+  Bio: String,
 });
 
 module.exports = model('Doctordb', doctorSchema);
