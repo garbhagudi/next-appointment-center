@@ -182,9 +182,10 @@ const DoctorForm: React.FC = () => {
               id='password'
               name='password'
               placeholder='Password'
+              className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
+              name='password'
               value={values.password}
               onChange={handleChange}
-              className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
             />
           </div>
         </div>
