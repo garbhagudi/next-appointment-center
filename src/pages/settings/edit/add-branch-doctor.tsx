@@ -53,6 +53,9 @@ const BDoctorForm: React.FC = () => {
     if (!values.department) {
       validationErrors.department = 'Department is required';
     }
+    // if (!values.Consultation_Fees) {
+    //   validationErrors.Consultation_Fees = 'Consultaion fee cannot be empty';
+    // }
     // Add more validation rules for other fields
 
     return validationErrors;
@@ -71,10 +74,10 @@ const BDoctorForm: React.FC = () => {
           <div>
             <input
               type='text'
-              id='Department'
+              id='department'
               placeholder='Department'
               className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              name='Department'
+              name='department'
               value={values.department}
               onChange={handleChange}
             />
@@ -95,26 +98,30 @@ const BDoctorForm: React.FC = () => {
           {errors.doctorName && <div>{errors.doctorName}</div>}
         </div>
 
-        <div className='grid lg:grid-cols-2 gap-3'>
+        {/* <h2 className='text-3xl lg:text-4xl text-center py-10 lg:py-16 font-text font-bold  '>
+          Consultation Type Consultation Fee
+        </h2> */}
+
+        <div className='grid lg:grid-cols-1 gap-3'>
           <div>
             <input
               type='text'
-              id='Consulation_Type'
-              placeholder='Consulation Type'
-              className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              name='Consulation Type'
-              value={values.Consultation_type}
+              id='Consultation_Fees'
+              placeholder='Consultation Fee'
+              className='text-lg text-centre px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
+              name='Consultation_Fees'
+              value={values.Consultation_Fees}
               onChange={handleChange}
             />
-            {errors.Consultation_type && <div>{errors.Consultation_type}</div>}
+            {errors.Consultation_Fees && <div>{errors.Consultation_Fees}</div>}
           </div>
           <div>
             <input
               type='text'
-              id='Consulation Fee'
+              id='Consulation_Fees'
               placeholder='Consulation Fee'
-              name='Consulation Fee'
-              className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
+              name='Consulation_Fees'
+              className='text-lg text-centre px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
               value={values.Consultation_Fees}
               onChange={handleChange}
             />
