@@ -12,7 +12,7 @@ interface FormValues {
   qualification: string;
   username: string;
   bio: string;
-  image: string;
+  image: ArrayBuffer | string;
   password: string;
 }
 
@@ -36,6 +36,7 @@ const DoctorForm: React.FC = () => {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<Partial<FormValues>>({});
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -49,28 +50,63 @@ const DoctorForm: React.FC = () => {
     }));
   };
 
+  const handlePhoneChnage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (value.match(/^\d{0,10}$/)) {
+      setValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+    }
+  };
+
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setSelectedImage(file);
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      }).then((base64) => {
+        setValues((prevValues) => ({
+          ...prevValues,
+          image: base64 as string,
+        }));
+      });
     }
   };
 
-  const handleImageUpload = () => {
-    if (selectedImage) {
-      console.log('Selected image:', selectedImage);
-      // Add code to upload the image to a server or cloud storage
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors: Partial<FormValues> = validateForm(values);
-
     if (Object.keys(validationErrors).length === 0) {
-      console.log(values); // Handle form submission
-      setValues(initialValues); // Reset form values
-      setErrors({}); // Reset errors
+      try {
+        setLoading(true);
+        const formData = { ...values };
+        const response = await fetch('/api/doctors', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          alert('Doctor added successfully');
+          console.log(JSON.stringify({ formData }));
+
+          // setValues(initialValues); // Reset form values
+          setErrors({}); // Reset errors
+        } else {
+          alert('Something went wrong!');
+        }
+      } catch (error) {
+        console.error('something went wrong!', error);
+      } finally {
+        setLoading(false);
+      }
     } else {
       setErrors(validationErrors); // Set validation errors
     }
@@ -85,8 +121,15 @@ const DoctorForm: React.FC = () => {
     if (!values.email) {
       validationErrors.email = 'Email is required';
     }
-    // Add more validation rules for other fields
-
+    if (!values.mobile) {
+      validationErrors.mobile = 'Mobile number is required';
+    }
+    if (!values.department) {
+      validationErrors.department = 'Department is required';
+    }
+    if (!values.gender) {
+      validationErrors.gender = 'Please Select Gender';
+    }
     return validationErrors;
   };
 
@@ -109,7 +152,11 @@ const DoctorForm: React.FC = () => {
             value={values.doctorName}
             onChange={handleChange}
           />
-          {errors.doctorName && <div>{errors.doctorName}</div>}
+          {errors.doctorName && (
+            <div className='text-brandPink text-sm text-center'>
+              {errors.doctorName}
+            </div>
+          )}
         </div>
 
         <div className='grid lg:grid-cols-2 gap-3'>
@@ -123,15 +170,19 @@ const DoctorForm: React.FC = () => {
               value={values.username}
               onChange={handleChange}
             />
-            {errors.username && <div>{errors.username}</div>}
+            {errors.username && (
+              <div className='text-brandPink text-sm text-center'>
+                {errors.username}
+              </div>
+            )}
           </div>
           <div>
             <input
               type='password'
               id='password'
+              name='password'
               placeholder='Password'
               className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              name='password'
               value={values.password}
               onChange={handleChange}
             />
@@ -149,7 +200,11 @@ const DoctorForm: React.FC = () => {
               value={values.email}
               onChange={handleChange}
             />
-            {errors.email && <div>{errors.email}</div>}
+            {errors.email && (
+              <div className='text-brandPink text-sm text-center'>
+                {errors.email}
+              </div>
+            )}
           </div>
           <div>
             <input
@@ -159,9 +214,13 @@ const DoctorForm: React.FC = () => {
               name='mobile'
               className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
               value={values.mobile}
-              onChange={handleChange}
+              onChange={handlePhoneChnage}
             />
-            {errors.mobile && <div>{errors.mobile}</div>}
+            {errors.mobile && (
+              <div className='text-brandPink text-sm text-center'>
+                {errors.mobile}
+              </div>
+            )}
           </div>
         </div>
 
@@ -176,21 +235,44 @@ const DoctorForm: React.FC = () => {
               value={values.department}
               onChange={handleChange}
             />
-            {errors.department && <div>{errors.department}</div>}
+            {errors.department && (
+              <div className='text-brandPink text-sm text-center'>
+                {errors.department}
+              </div>
+            )}
           </div>
-          <div className='w-full'>
-            <select
-              id='gender'
-              name='gender'
-              className='text-lg w-56 text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              value={values.gender}
-              onChange={handleChange}
-            >
-              <option value='male'>Male</option>
-              <option value='female'>Female</option>
-              <option value='other'>Other</option>
-            </select>
-            {errors.gender && <div>{errors.gender}</div>}
+          <div className='w-full flex flex-col gap-3 items-center justify-center'>
+            <div className='flex items-center justify-center gap-3'>
+              <div className='flex items-center'>
+                <input
+                  type='radio'
+                  id='male'
+                  name='gender'
+                  value='male'
+                  checked={values.gender === 'male'}
+                  onChange={handleChange}
+                  className='mr-2'
+                />
+                <label htmlFor='male'>Male</label>
+              </div>
+              <div className='flex items-center'>
+                <input
+                  type='radio'
+                  id='female'
+                  name='gender'
+                  value='female'
+                  checked={values.gender === 'female'}
+                  onChange={handleChange}
+                  className='mr-2 bg-slate-400'
+                />
+                <label htmlFor='female'>Female</label>
+              </div>
+            </div>
+            {errors.gender && (
+              <div className='text-brandPink text-sm text-center'>
+                {errors.gender}
+              </div>
+            )}
           </div>
         </div>
 
@@ -234,7 +316,11 @@ const DoctorForm: React.FC = () => {
               value={values.medicalCouncil}
               onChange={handleChange}
             />
-            {errors.medicalCouncil && <div>{errors.medicalCouncil}</div>}
+            {errors.medicalCouncil && (
+              <div className='text-brandPink text-sm text-center'>
+                {errors.medicalCouncil}
+              </div>
+            )}
           </div>
           <div>
             <input
@@ -246,7 +332,11 @@ const DoctorForm: React.FC = () => {
               value={values.qualification}
               onChange={handleChange}
             />
-            {errors.qualification && <div>{errors.qualification}</div>}
+            {errors.qualification && (
+              <div className='text-brandPink text-sm text-center'>
+                {errors.qualification}
+              </div>
+            )}
           </div>
         </div>
 
@@ -264,13 +354,6 @@ const DoctorForm: React.FC = () => {
           >
             Select Image
           </label>
-          <button
-            onClick={handleImageUpload}
-            className='px-4 py-2 bg-brandPurpleDark text-white rounded-md disabled:bg-brandPurple'
-            disabled={!selectedImage}
-          >
-            Upload
-          </button>
           {selectedImage && (
             <div className='mt-4'>
               <img
@@ -298,7 +381,7 @@ const DoctorForm: React.FC = () => {
             type='submit'
             className='text-lg text-center px-5 py-2 rounded-lg block border-2 border-brandPink bg-brandPink hover:bg-brandPink4 text-white font-semibold focus:outline-none focus:border-brandPurpleDark'
           >
-            Submit
+            {loading ? 'Loading' : 'Submit'}
           </button>
         </div>
       </form>
@@ -307,3 +390,7 @@ const DoctorForm: React.FC = () => {
 };
 
 export default DoctorForm;
+
+const Loader = () => {
+  <div></div>;
+};

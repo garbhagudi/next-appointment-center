@@ -6,12 +6,12 @@ export default async function Doctorhandler(
   res: NextApiResponse,
 ) {
   const client = await clientPromise;
-  const db = client.db('Appointment_db');
+  const db = client.db('Doctor_db');
 
   if (req.method === 'GET') {
     try {
       const doctors = await db
-        .collection('Doctor_db') // collection name
+        .collection('doctors') // collection name
         .find({})
         .toArray();
       res.status(200).json(doctors);
@@ -21,44 +21,44 @@ export default async function Doctorhandler(
   } else if (req.method === 'POST') {
     try {
       const {
-        id,
-        Name,
-        Mobile_Number,
-        Email,
-        Department,
-        Gender,
-        Medical_ID,
-        Medical_Council,
-        Experience,
-        Consultation_Type,
-        Qualification,
-        Username,
-        Bio,
+        doctorName,
+        email,
+        mobile,
+        department,
+        gender,
+        yearsOfExperience,
+        registrationNumber,
+        medicalCouncil,
+        qualification,
+        username,
+        bio,
+        image,
+        password,
       } = req.body;
 
       // Perform any necessary validation or data manipulation before inserting into the database
 
       const doctor = {
-        id,
-        Name,
-        Mobile_Number,
-        Email,
-        Department,
-        Gender,
-        Medical_ID,
-        Medical_Council,
-        Experience,
-        Consultation_Type,
-        Qualification,
-        Username,
-        Bio,
+        doctorName,
+        email,
+        mobile,
+        department,
+        gender,
+        yearsOfExperience,
+        registrationNumber,
+        medicalCouncil,
+        qualification,
+        username,
+        bio,
+        image,
+        password,
       };
 
-      const result = await db.collection('Doctor_db').insertOne(doctor);
+      const result = await db.collection('doctors').insertOne(doctor);
       const insertedId = result.insertedId;
 
       const insertedDoctor = await db
-        .collection('Doctor_db')
+        .collection('doctors')
         .findOne({ _id: insertedId });
       res.status(201).json(insertedDoctor);
     } catch (error) {
