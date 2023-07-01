@@ -4,7 +4,6 @@ interface FormValues {
   doctorName: string;
   email: string;
   mobile: string;
-  department: string;
   gender: string;
   yearsOfExperience: string;
   registrationNumber: string;
@@ -20,7 +19,6 @@ const initialValues: FormValues = {
   doctorName: '',
   email: '',
   mobile: '',
-  department: '',
   gender: '',
   yearsOfExperience: '',
   registrationNumber: '',
@@ -96,8 +94,8 @@ const DoctorForm: React.FC = () => {
         if (response.ok) {
           alert('Doctor added successfully');
           console.log(JSON.stringify({ formData }));
-
-          // setValues(initialValues); // Reset form values
+          setTimeout(() => 500);
+          setValues(initialValues); // Reset form values
           setErrors({}); // Reset errors
         } else {
           alert('Something went wrong!');
@@ -123,9 +121,6 @@ const DoctorForm: React.FC = () => {
     }
     if (!values.mobile) {
       validationErrors.mobile = 'Mobile number is required';
-    }
-    if (!values.department) {
-      validationErrors.department = 'Department is required';
     }
     if (!values.gender) {
       validationErrors.gender = 'Please Select Gender';
@@ -224,23 +219,10 @@ const DoctorForm: React.FC = () => {
           </div>
         </div>
 
-        <div className='grid lg:grid-cols-2 gap-3'>
-          <div>
-            <input
-              type='text'
-              id='department'
-              placeholder='Department'
-              className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              name='department'
-              value={values.department}
-              onChange={handleChange}
-            />
-            {errors.department && (
-              <div className='text-brandPink text-sm text-center'>
-                {errors.department}
-              </div>
-            )}
-          </div>
+        <div className='flex items-center justify-center gap-3'>
+          <label htmlFor='gender' className='text-lg'>
+            Gender
+          </label>
           <div className='w-full flex flex-col gap-3 items-center justify-center'>
             <div className='flex items-center justify-center gap-3'>
               <div className='flex items-center'>
@@ -251,7 +233,7 @@ const DoctorForm: React.FC = () => {
                   value='male'
                   checked={values.gender === 'male'}
                   onChange={handleChange}
-                  className='mr-2'
+                  className='mr-2 '
                 />
                 <label htmlFor='male'>Male</label>
               </div>

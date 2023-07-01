@@ -1,5 +1,6 @@
 import clientPromise from '@/lib/mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
+import bcrypt from 'bcryptjs';
 
 export default async function Doctorhandler(
   req: NextApiRequest,
@@ -37,6 +38,7 @@ export default async function Doctorhandler(
       } = req.body;
 
       // Perform any necessary validation or data manipulation before inserting into the database
+      const passwordHash = await bcrypt.hash(password, 10);
 
       const doctor = {
         doctorName,
@@ -51,7 +53,7 @@ export default async function Doctorhandler(
         username,
         bio,
         image,
-        password,
+        passwordHash,
       };
 
       const result = await db.collection('doctors').insertOne(doctor);
