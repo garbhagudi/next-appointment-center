@@ -26,7 +26,7 @@
     "cloudinary": "^1.37.1",
     "dotenv": "^16.1.4",
     "eslint": "^8.42.0",
-    "eslint-config-next": "13.4.4",
+    "eslint-config-next": "13.4.8",
     "express": "^4.18.2",
     "formik": "^2.4.1",
     "graphql": "^16.6.0",
