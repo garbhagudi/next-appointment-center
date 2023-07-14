@@ -6,12 +6,12 @@ export default async function Patienthandler(
   res: NextApiResponse,
 ) {
   const client = await clientPromise;
-  const db = client.db('Appointment_db');
+  const db = client.db('Patient_db');
 
   if (req.method === 'GET') {
     try {
       const patients = await db
-        .collection('Patient_db') // collection name
+        .collection('patient') // collection name
         .find({})
         .toArray();
       res.status(200).json(patients);

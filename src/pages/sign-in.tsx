@@ -27,7 +27,7 @@ const onSubmit = (values: Values, { setSubmitting }: any) => {
 };
 
 const MyForm: React.FC = () => (
-  <section className="h-full flex items-stretch text-white bg-[url('https://res.cloudinary.com/garbhagudiivf/image/upload/v1670318557/Misc/5564522_ef0kux.jpg')] bg-cover bg-center bg-no-repeat">
+  <section className="h-full flex items-stretch text-white bg-[url(''https://res.cloudinary.com/garbhagudiivf/image/upload/v1670318557/Misc/5564522_ef0kux.jpg)] bg-cover bg-center bg-no-repeat">
     <div className='lg:flex w-1/2 hidden bg-no-repeat relative items-center '>
       <div className='w-full px-24 z-10'>
         <h1 className='text-5xl font-bold text-left tracking-wide font-heading max-w-xl leading-[1.3] text-gray-800'>

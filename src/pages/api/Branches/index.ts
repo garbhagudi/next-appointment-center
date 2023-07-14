@@ -11,7 +11,7 @@ export default async function Loationthandler(
   if (req.method === 'GET') {
     try {
       const branches = await db
-        .collection('Branch_db') // collection name
+        .collection('branches') // collection name
         .find({})
         .toArray();
       res.status(200).json(branches);

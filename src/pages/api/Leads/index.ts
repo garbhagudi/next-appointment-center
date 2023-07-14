@@ -6,12 +6,12 @@ export default async function Leadhandler(
   res: NextApiResponse,
 ) {
   const client = await clientPromise;
-  const db = client.db('Appointment_db');
+  const db = client.db('Leads_db');
 
   if (req.method === 'GET') {
     try {
       const leads = await db
-        .collection('Lead_db') // collection name
+        .collection('leads') // collection name
         .find({})
         .toArray();
       res.status(200).json(leads);

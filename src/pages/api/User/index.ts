@@ -6,12 +6,12 @@ export default async function Appointmenthandler(
   res: NextApiResponse,
 ) {
   const client = await clientPromise;
-  const db = client.db('Appointment_db');
+  const db = client.db('User_db');
 
   if (req.method === 'GET') {
     try {
       const users = await db
-        .collection('User_db') // collection name
+        .collection('user') // collection name
         .find({})
         .toArray();
       res.status(200).json(users);
