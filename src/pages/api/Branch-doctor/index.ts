@@ -22,24 +22,20 @@ export default async function Appointmenthandler(
     try {
       const {
         id,
-        Doctor_Name,
-        Start_Time,
-        End_Time,
-        Consultation_Type,
-        Patient_Name,
-        image,
+        doctorName,
+        department,
+        selectedOptions,
+        inputValues,
       } = req.body;
 
       // Perform any necessary validation or data manipulation before inserting into the database
 
       const appointment = {
         id,
-        Doctor_Name,
-        Start_Time,
-        End_Time,
-        Consultation_Type,
-        Patient_Name,
-        image,
+        doctorName,
+        department,
+        selectedOptions,
+        inputValues,
       };
 
       const result = await db.collection('branch_doctor').insertOne(appointment);

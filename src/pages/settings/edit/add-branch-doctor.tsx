@@ -3,23 +3,71 @@ import React, { useState, ChangeEvent } from 'react';
 interface FormValues {
   doctorName: string;
   department: string;
-  Consultation_type: string;
-  Consultation_Fees_Inperson: string;
-  Consultaion_Fees_Telephone: string;
 }
 
 const initialValues: FormValues = {
   doctorName: '',
   department: '',
-  Consultation_type: '',
-  Consultation_Fees_Inperson: '',
-  Consultaion_Fees_Telephone: '',
 };
+
+interface Option {
+  value: string;
+  label: string;
+  inputVisible: boolean;
+}
+
+const options: Option[] = [
+  {
+    value: 'Consultation_Fee_Physical',
+    label: 'Physical Consultation',
+    inputVisible: false,
+  },
+  {
+    value: 'Consultation_Fee_Telephone',
+    label: 'Tele Consultation',
+    inputVisible: false,
+  },
+];
 
 const BDoctorForm: React.FC = () => {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<Partial<FormValues>>({});
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+
+  const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedValue = event.target.value;
+    const isChecked = event.target.checked;
+
+    let updatedSelectedOptions: string[];
+
+    if (isChecked) {
+      updatedSelectedOptions = [...selectedOptions, selectedValue];
+    } else {
+      updatedSelectedOptions = selectedOptions.filter((value) => value !== selectedValue);
+    }
+
+    setSelectedOptions(updatedSelectedOptions);
+
+    // Reset input value if the option is deselected
+    if (!isChecked) {
+      setInputValues((prevInputValues) => {
+        const updatedInputValues = { ...prevInputValues };
+        delete updatedInputValues[selectedValue];
+        return updatedInputValues;
+      });
+    }};
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const fieldName = event.target.name;
+      const fieldValue = event.target.value;
+  
+      setInputValues((prevInputValues) => ({
+        ...prevInputValues,
+        [fieldName]: fieldValue,
+      }));
+    };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -33,18 +81,49 @@ const BDoctorForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors: Partial<FormValues> = validateForm(values);
-
     if (Object.keys(validationErrors).length === 0) {
-      console.log(values); // Handle form submission
-      setValues(initialValues); // Reset form values
-      setErrors({}); // Reset errors
+      try {
+        setLoading(true);
+        const formData = { ...values,
+        selectedOptions,
+        inputValues,
+    };
+        const response = await fetch('/api/Branch-doctor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          alert('Doctor added to branch successfully');
+          console.log(JSON.stringify({ formData }));
+          setTimeout(() => 500);
+          setValues(initialValues);
+          resetForm();
+           // Reset form values
+          setErrors({}); // Reset errors
+        } else {
+          alert('Something went wrong!');
+        }
+      } catch (error) {
+        console.error('something went wrong!', error);
+      } finally {
+        setLoading(false);
+      }
     } else {
       setErrors(validationErrors); // Set validation errors
     }
   };
+
+  const resetForm = () => {
+    setSelectedOptions([]);
+    setInputValues({});
+  }; 
 
   const validateForm = (values: FormValues): Partial<FormValues> => {
     const validationErrors: Partial<FormValues> = {};
@@ -54,9 +133,6 @@ const BDoctorForm: React.FC = () => {
     }
     if (!values.department) {
       validationErrors.department = 'Department is required';
-    }
-    if (!values.Consultation_Fees_Inperson) {
-      validationErrors.Consultation_Fees_Inperson = 'Consultaion fee cannot be empty';
     }
     // Add more validation rules for other fields
 
@@ -105,30 +181,53 @@ const BDoctorForm: React.FC = () => {
         </h2> */}
 
         <div className='grid lg:grid-cols-1 gap-3'>
-          <div>
-            <input
-              type='number'
-              id='Consultation_Fees_Inperson'
-              placeholder='Consultation Fee Inperson'
-              className='text-lg text-centre px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              name='Consultation_Fees_Inperson'
-              value={values.Consultation_Fees_Inperson}
-              onChange={handleChange}
-            />
-            {errors.Consultation_Fees_Inperson && <div>{errors.Consultation_Fees_Inperson}</div>}
-          </div>
-          <div>
-            <input
-              type='number'
-              id='Consultaion_Fees_Telephone'
-              placeholder='Consulation Fee Telephone'
-              name='Consultaion_Fees_Telephone'
-              className='text-lg text-centre px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              value={values.Consultaion_Fees_Telephone}
-              onChange={handleChange}
-            />
-            {errors.Consultaion_Fees_Telephone && <div>{errors.Consultaion_Fees_Telephone}</div>}
-          </div>
+        <h1 className= 'text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'>Consultation Type</h1>
+      {options.map((option) => (
+        <div
+          key={option.value}
+          style={{
+            marginBottom: '10px',
+            border: `1px solid ${selectedOptions.includes(option.value) ? 'lightblue' : 'white'}`,
+            borderRadius: '10px',
+            padding: '10px',
+            backgroundColor: selectedOptions.includes(option.value) ? 'lightblue' : 'white',
+          }}
+        >
+          <label htmlFor={option.value}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <input
+                type="checkbox"
+                id={option.value}
+                name={option.value}
+                value={option.value}
+                checked={selectedOptions.includes(option.value)}
+                onChange={handleOptionChange}
+                style={{ marginRight: '5px' }}
+              />
+              {option.label}
+            </div>
+          </label>
+          {selectedOptions.includes(option.value) && (
+            <div style={{ marginLeft: '30px', marginTop: '10px' }}>
+              <label htmlFor={`${option.value}-input`}>Enter value:</label>
+              <input
+                type="text"
+                id={`${option.value}-input`}
+                name={option.value}
+                value={inputValues[option.value] || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+          )}
+        </div>
+      ))}
+
+      <h2>Selected Options:</h2>
+      {selectedOptions.map((option) => (
+        <div key={option}>
+          {option}: {inputValues[option]}
+        </div>
+      ))}
         </div>
 
         <div className='py-16'>

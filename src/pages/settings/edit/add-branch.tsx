@@ -1,13 +1,13 @@
 import React, { useState, ChangeEvent } from 'react';
 
 interface FormValues {
-  Branch_Name: string;
-  Branch_Address: string;
+  Name: string;
+  Address: string;
 }
 
 const initialValues: FormValues = {
-  Branch_Name: '',
-  Branch_Address: '',
+  Name: '',
+  Address: '',
 };
 
 const BranchForm: React.FC = () => {
@@ -57,11 +57,11 @@ const BranchForm: React.FC = () => {
   const validateForm = (values: FormValues): Partial<FormValues> => {
     const validationErrors: Partial<FormValues> = {};
 
-    if (!values.Branch_Name) {
-      validationErrors.Branch_Name = 'Branch name is required';
+    if (!values.Name) {
+      validationErrors.Name = 'Branch name is required';
     }
-    if (!values.Branch_Address) {
-      validationErrors.Branch_Address = 'Address is required';
+    if (!values.Address) {
+      validationErrors.Address = 'Address is required';
     }
     // Add more validation rules for other fields
 
@@ -84,10 +84,10 @@ const BranchForm: React.FC = () => {
             className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
             name='Branch Name'
             placeholder='Branch Name'
-            value={values.Branch_Name}
+            value={values.Name}
             onChange={handleChange}
           />
-          {errors.Branch_Name && <div>{errors.Branch_Name}</div>}
+          {errors.Name && <div>{errors.Name}</div>}
         </div>
 
         <div className='grid lg:grid-cols-1 gap-3'>
@@ -98,10 +98,10 @@ const BranchForm: React.FC = () => {
               placeholder='Branch Address'
               className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
               name='Branch Address'
-              value={values.Branch_Address}
+              value={values.Address}
               onChange={handleChange}
             />
-            {errors.Branch_Address && <div>{errors.Branch_Address}</div>}
+            {errors.Address && <div>{errors.Address}</div>}
           </div>
         </div>
         {/* <div className='flex justify-center items-center space-x-3'>
