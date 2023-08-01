@@ -1,111 +1,143 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import React, { useState, ChangeEvent } from 'react';
 
-export default function AddUser() {
+interface FormValues {
+  First_Name: string;
+  Last_Name: string;
+  Username: string;
+  Email: string;
+  Password: string;
+}
+
+const initialValues: FormValues = {
+  First_Name: '',
+  Last_Name: '',
+  Username: '',
+  Email: '',
+  Password: '',
+};
+
+const UserForm: React.FC = () => {
+  const [values, setValues] = useState<FormValues>(initialValues);
+  const [errors, setErrors] = useState<Partial<FormValues>>({});
+  const [loading, setLoading] = useState(false);
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const fieldName = event.target.name;
+      const fieldValue = event.target.value;
+  
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const validationErrors: Partial<FormValues> = validateForm(values);
+    if (Object.keys(validationErrors).length === 0) {
+      try {
+        setLoading(true);
+        const formData = { ...values,
+    };
+        const response = await fetch('/api/User', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          alert('User added to branch successfully');
+          console.log(JSON.stringify({ formData }));
+          setTimeout(() => 500);
+          setValues(initialValues);
+           // Reset form values
+          setErrors({}); // Reset errors
+        } else {
+          alert('Something went wrong!');
+        }
+      } catch (error) {
+        console.error('something went wrong!', error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setErrors(validationErrors); // Set validation errors
+    }
+  };
+
+  const validateForm = (values: FormValues): Partial<FormValues> => {
+    const validationErrors: Partial<FormValues> = {};
+
+    if (!values.First_Name) {
+      validationErrors.First_Name = 'First name is required';
+    }
+    if (!values.Last_Name) {
+      validationErrors.Last_Name = 'First name is required';
+    }
+    if (!values.Username) {
+      validationErrors.Username = 'First name is required';
+    }
+    if (!values["Email"]) {
+      errors["Email"] = "Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(values["Email"])) {
+      errors["Email"] = "Invalid email address";
+    }
+    if (!values.Password) {
+      validationErrors.Password = 'First name is required';
+    }
+    // Add more validation rules for other fields
+
+    return validationErrors;
+  };
+
   return (
-    <div className='max-w-7xl mx-auto flex justify-center flex-col '>
-      <h1 className='pt-16 pb-8 text-4xl lg:text-5xl font-heading text-center font-bold'>
-        Add New User
-      </h1>
-      <Formik
-        initialValues={{
-          'First Name': '',
-          'Last Name': '',
-          Username: '',
-          Email: '',
-        }}
-        onSubmit={async (values) => {
-          await new Promise((r) => setTimeout(r, 500));
-          alert(JSON.stringify(values, null, 2));
-        }}
-        validate={(values) => {
-          const errors: { [key: string]: string } = {};
-
-          if (!values['First Name']) {
-            errors['First Name'] = 'First Name is required';
-          }
-
-          if (!values['Last Name']) {
-            errors['Last Name'] = 'Last Name is required';
-          }
-
-          if (!values['Username']) {
-            errors['Username'] = 'Username is required';
-          }
-
-          if (!values['Email']) {
-            errors['Email'] = 'Email is required';
-          } else if (!/^\S+@\S+\.\S+$/.test(values['Email'])) {
-            errors['Email'] = 'Invalid email address';
-          }
-
-          return errors;
-        }}
+    <div>
+      <h2 className='text-3xl lg:text-4xl text-center py-10 lg:py-16 font-heading font-bold'>
+        Add User
+      </h2>
+      <form
+        onSubmit={handleSubmit}
+        className='max-w-4xl mx-auto flex flex-col items-center justify-center space-y-3 px-3 font-content'
       >
-        <Form className='flex items-center justify-center flex-col space-y-4'>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-            <div className='flex items-center flex-col'>
-              <Field
-                type='text'
-                name='First Name'
-                placeholder='First Name'
-                className='text-xl text-center w-80 px-3 py-2 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              />
-              <ErrorMessage
-                name='First Name'
-                component='div'
-                className='error text-sm font-content text-brandPink mt-2'
-              />
-            </div>
-            <div className='flex items-center flex-col'>
-              <Field
-                type='text'
-                name='Last Name'
-                placeholder='Last Name'
-                className='text-xl text-center w-80 px-3 py-2 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              />
-              <ErrorMessage
-                name='Last Name'
-                component='div'
-                className='error text-sm font-content text-brandPink mt-2'
-              />
-            </div>
-          </div>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-            <div className='flex items-center flex-col'>
-              <Field
-                type='text'
-                name='Username'
-                placeholder='Username'
-                className='text-xl text-center w-80 px-3 py-2 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              />
-              <ErrorMessage
-                name='Username'
-                component='div'
-                className='error text-sm font-content text-brandPink mt-2'
-              />
-            </div>
-            <div className='flex items-center justify-center flex-col'>
-              <Field
-                type='email'
-                name='Email'
-                placeholder='Email'
-                className='text-xl text-center w-80 px-3 py-2 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              />
-              <ErrorMessage
-                name='Email'
-                component='div'
-                className='error text-sm font-content text-brandPink mt-2'
-              />
-            </div>
-          </div>
+        <div className='grid lg:grid-cols-1 gap-3'>
+        </div>
+        <div>
+          <input
+            type='text'
+            id='First_Name'
+            className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
+            name='First_Name'
+            placeholder='First Name'
+            value={values.First_Name}
+            onChange={handleChange}
+          />
+          {errors.First_Name && <div>{errors.First_Name}</div>}
+        </div>
+
+        {/* <h2 className='text-3xl lg:text-4xl text-center py-10 lg:py-16 font-text font-bold  '>
+          Consultation Type Consultation Fee
+        </h2> */}
+
+        <div className='py-16'>
           <button
             type='submit'
-            className='px-5 py-2 my-8 bg-brandPink hover:bg-brandPink3 text-white font-content font-semibold rounded-lg'
+            className='text-lg text-center px-5 py-2 rounded-lg block border-2 border-brandPink bg-brandPink hover:bg-brandPink4 text-white font-semibold focus:outline-none focus:border-brandPurpleDark'
           >
             Submit
           </button>
-        </Form>
-      </Formik>
+        </div>
+      </form>
     </div>
   );
-}
+};
+};
+
+export default UserForm;

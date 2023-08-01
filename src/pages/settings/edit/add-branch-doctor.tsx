@@ -2,12 +2,10 @@ import React, { useState, ChangeEvent } from 'react';
 
 interface FormValues {
   doctorName: string;
-  department: string;
 }
 
 const initialValues: FormValues = {
   doctorName: '',
-  department: '',
 };
 
 interface Option {
@@ -131,9 +129,6 @@ const BDoctorForm: React.FC = () => {
     if (!values.doctorName) {
       validationErrors.doctorName = 'Doctor name is required';
     }
-    if (!values.department) {
-      validationErrors.department = 'Department is required';
-    }
     // Add more validation rules for other fields
 
     return validationErrors;
@@ -149,20 +144,7 @@ const BDoctorForm: React.FC = () => {
         className='max-w-4xl mx-auto flex flex-col items-center justify-center space-y-3 px-3 font-content'
       >
         <div className='grid lg:grid-cols-1 gap-3'>
-          <div>
-            <input
-              type='text'
-              id='department'
-              placeholder='Department'
-              className='text-lg text-center px-2.5 py-1.5 rounded-lg block border-2 border-brandPink text-brandPurpleDark focus:outline-none focus:border-brandPurpleDark'
-              name='department'
-              value={values.department}
-              onChange={handleChange}
-            />
-            {errors.department && <div>{errors.department}</div>}
-          </div>
         </div>
-
         <div>
           <input
             type='text'
